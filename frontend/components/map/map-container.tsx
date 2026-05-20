@@ -4,8 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import Map, { Marker, Popup, MapRef } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { EventResponse } from "@/types/types";
-
-// Shadcn UI components
 import {
   Select,
   SelectContent,
@@ -25,8 +23,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-
-// Icons
 import { Filter, Navigation } from "lucide-react";
 
 interface MapContainerProps {
@@ -35,7 +31,6 @@ interface MapContainerProps {
   onSelectEvent: (event: EventResponse | null) => void;
 }
 
-// Updated colors to thematically match the categories
 const CATEGORY_COLORS: Record<string, string> = {
   NIGHTLIFE: "#8b5cf6", // Purple
   MUSIC: "#ef4444", // Red
@@ -46,6 +41,10 @@ const CATEGORY_COLORS: Record<string, string> = {
   ART: "#ec4899", // Pink
   OTHER: "#6b7280", // Gray
 };
+
+const TALLINN_BOUNDS: [number, number, number, number] = [
+  24.3, 59.3, 25.1, 59.6,
+];
 
 const MAP_STYLE =
   "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
@@ -251,6 +250,7 @@ export default function MapContainer({
           zoom: 13,
           pitch: 35,
         }}
+        maxBounds={TALLINN_BOUNDS}
         style={{ width: "100%", height: "100%" }}
         mapStyle={MAP_STYLE}
         attributionControl={false}
