@@ -3,14 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Calendar, Home, Map, User } from "lucide-react";
+import { NAV_TABS } from "@/constants/navigation";
 
 export const BottomNavbar = () => {
   const pathname = usePathname();
   return (
     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
       <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/10 p-2 backdrop-blur-2xl shadow-xl w-fit mx-auto">
-        {tabs.map((tab) => {
+        {NAV_TABS.map((tab) => {
           const isActive = pathname === tab.href;
+          const Icon = tab.icon;
           return (
             <Link
               key={tab.id}
@@ -29,7 +31,7 @@ export const BottomNavbar = () => {
                 stroke="currentColor"
                 className="w-6 h-6"
               >
-                {tab.icon}
+                <Icon />
               </svg>
             </Link>
           );
@@ -38,26 +40,3 @@ export const BottomNavbar = () => {
     </div>
   );
 };
-
-const tabs = [
-  //   {
-  //     id: "home",
-  //     icon: <Home />,
-  //     href: "/",
-  //   },
-  {
-    id: "map",
-    icon: <Map />,
-    href: "/map",
-  },
-  //   {
-  //     id: "events",
-  //     icon: <Calendar />,
-  //     href: "/events",
-  //   },
-  {
-    id: "account",
-    icon: <User />,
-    href: "/account",
-  },
-];
