@@ -138,7 +138,7 @@
   border-radius: 0;
 }
 
-/* Hide the default pointer/tip if you don't want it */
+/* Hide the default pointer/tip */
 .mapboxgl-popup.custom-popup .mapboxgl-popup-tip,
 .maplibregl-popup.custom-popup .maplibregl-popup-tip {
   display: none;
