@@ -159,3 +159,9 @@ java -jar target/app.jar
 - Recommended IDEs:
   - IntelliJ IDEA
   - VS Code
+
+---
+
+# Extra
+
+- Click [here](./backend/src/main/java/com/example/demo/event/EVENTS.md) for the /events endpoint docs
