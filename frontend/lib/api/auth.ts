@@ -1,7 +1,34 @@
 "use server";
 
-export async function login() {}
+import { UserLoginRequest, UserRegistrationRequest } from "@/types/user";
+import { backendFetch } from "./client";
+import { ApiResponse } from "@/types/types";
 
-export async function signup() {}
+export async function login(req: UserLoginRequest) {
+  const res = await backendFetch("/login", {
+    method: "POST",
+    body: JSON.stringify(req),
+  });
 
-export async function logout() {}
+  const body: ApiResponse<void> = await res.json();
+  return body;
+}
+
+export async function register(req: UserRegistrationRequest) {
+  const res = await backendFetch("/register", {
+    method: "POST",
+    body: JSON.stringify(req),
+  });
+
+  const body: ApiResponse<void> = await res.json();
+  return body;
+}
+
+export async function logout() {
+  const res = await backendFetch("/logout", {
+    method: "POST",
+  });
+
+  const body: ApiResponse<void> = await res.json();
+  return body;
+}
