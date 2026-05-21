@@ -3,9 +3,9 @@ import { Geist, Geist_Mono, Figtree } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { BottomNavbar } from "@/components/layout/bottom-navbar";
-import Silk from "@/components/Silk";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
+import Particles from "@/components/Particles";
 
 const figtree = Figtree({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -51,12 +51,16 @@ export default function RootLayout({
         >
           <div className="fixed inset-0 -z-10 w-full h-[100lvh] overflow-hidden will-change-transform backface-hidden">
             <div className="absolute inset-0 w-full h-full">
-              <Silk
-                speed={5}
-                scale={1}
-                color="#5227FF"
-                noiseIntensity={1.5}
-                rotation={0}
+              <Particles
+                particleColors={["#ffffff"]}
+                particleCount={200}
+                particleSpread={10}
+                speed={0.1}
+                particleBaseSize={100}
+                moveParticlesOnHover
+                alphaParticles={false}
+                disableRotation={false}
+                pixelRatio={1}
               />
             </div>
           </div>
