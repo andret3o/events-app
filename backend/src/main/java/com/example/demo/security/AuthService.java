@@ -1,5 +1,6 @@
 package com.example.demo.security;
 
+import com.example.demo.exception.ConflictException;
 import com.example.demo.exception.DuplicateResourceException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.security.dto.UserLoginRequest;
@@ -28,11 +29,11 @@ public class AuthService {
 
     public User registerUser(UserRegistrationRequest dto) {
         if (userRepository.existsByEmail(dto.email()))  {
-            throw new DuplicateResourceException("Email '" + dto.email() + "' is already registered.");
+            throw new ConflictException("Email '" + dto.email() + "' is already registered.");
         }
 
         if (userRepository.existsByUsername(dto.username())) {
-            throw new DuplicateResourceException("Username '" + dto.username() + "' is already registered.");
+            throw new ConflictException("Username '" + dto.username() + "' is already registered.");
         }
 
         User user = User.builder()

@@ -50,12 +50,9 @@ public class WebSecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPointJwt))
                 .authorizeHttpRequests(auth -> auth
-                        // Public auth endpoints
                         .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/events/**").permitAll()
-                        // Actuator health check (optional)
                         .requestMatchers("/actuator/health").permitAll()
-                        // Swagger/OpenAPI (optional — remove in production)
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",

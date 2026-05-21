@@ -1,23 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
+import { login, register } from "@/lib/api/auth";
+import { ApiResponse } from "@/types/types";
+import { InputHTMLAttributes, useState } from "react";
+import { toast } from "sonner";
 
-const GlassInput = ({
-  label,
-  type = "text",
-  placeholder,
-}: {
+interface GlassInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
-  type?: string;
-  placeholder: string;
-}) => (
-  <div className="w-full space-y-2">
+}
+
+const GlassInput = ({ label, className = "", ...props }: GlassInputProps) => (
+  <div className={`w-full space-y-2 ${className}`}>
     <label className="text-[9px] uppercase tracking-[0.25em] text-white/40 ml-4 font-mono">
       {label}
     </label>
     <input
-      type={type}
-      placeholder={placeholder}
+      {...props}
       className="w-full h-12 md:h-14 px-6 rounded-full bg-white/5 border border-white/10 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 focus:bg-white/10 transition-all duration-300 backdrop-blur-md"
     />
   </div>
@@ -25,6 +23,38 @@ const GlassInput = ({
 
 export default function AuthPage() {
   const [authMode, setAuthMode] = useState<"login" | "signup">("login");
+  const [loading, setLoading] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [usernmae, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  async function handleSubmit(e: React.SubmitEvent) {
+    e.preventDefault();
+    setLoading(true);
+    const res: ApiResponse<void> =
+      authMode === "login"
+        ? await login({ username: usernmae, password: password })
+        : await register({
+            name: name,
+            email: email,
+            username: usernmae,
+            password: password,
+          });
+
+    if (res.success) {
+      toast.success(
+        (authMode === "login" ? "Login " : "Sign up ") + "successful!",
+        {
+          position: "top-center",
+        },
+      );
+    } else {
+      toast.error(res.message, { position: "top-center" });
+    }
+
+    setLoading(false);
+  }
 
   return (
     // Use min-h-[100dvh] to ensure the page works well with dynamic mobile keyboard heights
@@ -67,28 +97,56 @@ export default function AuthPage() {
         </div>
 
         {/* Form Area - Tightened padding for mobile */}
-        <div className="bg-white/[0.03] border border-white/10 rounded-[32px] md:rounded-[40px] p-6 md:p-8 backdrop-blur-2xl shadow-2xl space-y-4 md:space-y-6">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white/[0.03] border border-white/10 rounded-[32px] md:rounded-[40px] p-6 md:p-8 backdrop-blur-2xl shadow-2xl space-y-4 md:space-y-6"
+        >
           {authMode === "signup" && (
-            <GlassInput label="Full Name" placeholder="Amelia Jones" />
+            <div className="space-y-4">
+              <GlassInput
+                label="Full Name"
+                placeholder="John Doe"
+                onChange={(e) => setName(e.target.value)}
+              />
+              <GlassInput
+                label="Email address"
+                placeholder="johndoe@example.com"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
           )}
 
           <GlassInput
-            label="Email Address"
-            type="email"
-            placeholder="amelia@luma.com"
+            label="Username"
+            type="username"
+            placeholder="john_doe"
+            onChange={(e) => setUsername(e.target.value)}
           />
-          <GlassInput label="Password" type="password" placeholder="••••••••" />
+          <GlassInput
+            label="Password"
+            type="password"
+            placeholder="••••••••"
+            onChange={(e) => setPassword(e.target.value)}
+          />
 
           {authMode === "login" && (
             <div className="flex justify-end px-4">
-              <button className="text-[10px] text-white/30 uppercase tracking-wider font-mono">
+              <button
+                type="button"
+                className="text-[10px] text-white/30 uppercase tracking-wider font-mono"
+              >
                 Forgot password?
               </button>
             </div>
           )}
 
-          <button className="w-full h-12 md:h-14 bg-white text-neutral-900 rounded-full font-medium active:scale-[0.97] transition-all duration-300 shadow-xl mt-2">
-            {authMode === "login" ? "Sign In" : "Create Account"}
+          <button
+            className="w-full h-12 md:h-14 bg-white text-neutral-900 rounded-full font-medium active:scale-[0.97] transition-all duration-300 shadow-xl mt-2"
+            disabled={loading}
+          >
+            {!loading && (authMode === "login" ? "Sign In" : "Create Account")}
+            {loading &&
+              (authMode === "login" ? "Signing In..." : "Creating Account...")}
           </button>
 
           {/* Social Divider */}
@@ -101,18 +159,24 @@ export default function AuthPage() {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <button className="h-12 rounded-full border border-white/10 bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all">
+            <button
+              type="button"
+              className="h-12 rounded-full border border-white/10 bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all"
+            >
               <span className="text-[10px] uppercase font-bold tracking-widest">
                 Google
               </span>
             </button>
-            <button className="h-12 rounded-full border border-white/10 bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all">
+            <button
+              type="button"
+              className="h-12 rounded-full border border-white/10 bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all"
+            >
               <span className="text-[10px] uppercase font-bold tracking-widest">
                 Apple
               </span>
             </button>
           </div>
-        </div>
+        </form>
 
         {/* Footer Meta - Simplified for mobile */}
         <div className="text-center px-6">

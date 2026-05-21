@@ -5,7 +5,7 @@ import { backendFetch } from "./client";
 import { ApiResponse } from "@/types/types";
 
 export async function login(req: UserLoginRequest) {
-  const res = await backendFetch("/login", {
+  const res = await backendFetch("/auth/login", {
     method: "POST",
     body: JSON.stringify(req),
   });
@@ -15,7 +15,7 @@ export async function login(req: UserLoginRequest) {
 }
 
 export async function register(req: UserRegistrationRequest) {
-  const res = await backendFetch("/register", {
+  const res = await backendFetch("/auth/register", {
     method: "POST",
     body: JSON.stringify(req),
   });
@@ -25,7 +25,7 @@ export async function register(req: UserRegistrationRequest) {
 }
 
 export async function logout() {
-  const res = await backendFetch("/logout", {
+  const res = await backendFetch("/auth/logout", {
     method: "POST",
   });
 
