@@ -63,3 +63,8 @@ export interface EventResponse {
   endTime: string;
   createdAt: string;
 }
+
+export interface AuthResponse {
+  accessToken: string;
+  expirationMs: number;
+}

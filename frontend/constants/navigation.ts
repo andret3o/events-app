@@ -18,8 +18,8 @@ export const NAV_TABS = [
   //     href: "/events",
   //   },
   {
-    id: "account",
+    id: "profile",
     icon: User,
-    href: "/account",
+    href: "/profile",
   },
 ] as const;

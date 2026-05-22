@@ -57,11 +57,9 @@ export default function AuthPage() {
   }
 
   return (
-    // Use min-h-[100dvh] to ensure the page works well with dynamic mobile keyboard heights
     <div className="min-h-[100dvh] text-white flex items-center justify-center p-4 relative overflow-hidden font-sans">
-      {/* Main Container - Responsive width */}
       <div className="w-full max-w-[360px] md:max-w-md z-10 space-y-6 md:space-y-8">
-        {/* Brand Header */}
+        {/* Header */}
         <div className="text-center space-y-1">
           <h1 className="text-3xl md:text-4xl font-light tracking-tight">
             {authMode === "login" ? "Welcome back" : "Start your journey"}
@@ -71,7 +69,7 @@ export default function AuthPage() {
           </p>
         </div>
 
-        {/* The Sliding Toggle - Optimized for mobile tap targets */}
+        {/* The Sliding Toggle */}
         <div className="relative w-full h-[52px] md:h-[60px] bg-white/5 border border-white/10 rounded-full p-1 flex items-center backdrop-blur-xl">
           <div
             className={`absolute h-[44px] md:h-[50px] w-[calc(50%-4px)] bg-white rounded-full transition-all duration-500 ease-out shadow-lg ${
@@ -96,7 +94,7 @@ export default function AuthPage() {
           </button>
         </div>
 
-        {/* Form Area - Tightened padding for mobile */}
+        {/* Form Area */}
         <form
           onSubmit={handleSubmit}
           className="bg-white/[0.03] border border-white/10 rounded-[32px] md:rounded-[40px] p-6 md:p-8 backdrop-blur-2xl shadow-2xl space-y-4 md:space-y-6"
@@ -178,7 +176,7 @@ export default function AuthPage() {
           </div>
         </form>
 
-        {/* Footer Meta - Simplified for mobile */}
+        {/* Footer */}
         <div className="text-center px-6">
           <p className="text-[9px] text-white/20 uppercase tracking-[0.2em]">
             By continuing you agree to our{" "}
