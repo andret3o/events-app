@@ -75,13 +75,4 @@ public class AuthController {
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .build();
     }
-
-//    @GetMapping("/me")
-//    public ResponseEntity<?> me(@AuthenticationPrincipal UserPrincipal principal){
-//        if (principal == null) {
-//            return ResponseEntity.status(401).body("Unauthorized");
-//        }
-//        User user = userService.getUserById(principal.getId());
-//        return ResponseEntity.ok().build();
-//    }
 }
