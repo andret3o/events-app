@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Map, { Marker, Popup, MapRef } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { EventResponse } from "@/types/types";
+import { EventResponse } from "@/types/event";
 import {
   Select,
   SelectContent,
@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Filter, Navigation } from "lucide-react";
+import { useTheme } from "next-themes";
 
 interface MapContainerProps {
   events: EventResponse[];
@@ -46,9 +47,12 @@ const TALLINN_BOUNDS: [number, number, number, number] = [
   24.3, 59.3, 25.1, 59.6,
 ];
 
-const MAP_STYLE =
-  "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
+type ThemeOption = "dark" | "light";
 
+const MAP_STYLES: Record<ThemeOption, string> = {
+  dark: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
+  light: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+};
 export default function MapContainer({
   events,
   selectedEvent,
@@ -65,8 +69,12 @@ export default function MapContainer({
   // Filter States
   const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
   const [typeFilter, setTypeFilter] = useState<string>("ALL");
-  const [dateFilter, setDateFilter] = useState<string>("");
+  const [dateFilter, setDateFilter] = useState<string>(
+    new Date().toLocaleDateString("en-CA"),
+  );
   const [timeFilter, setTimeFilter] = useState<string>("");
+  const { resolvedTheme } = useTheme();
+  const mapStyle = MAP_STYLES[(resolvedTheme as ThemeOption) ?? "light"];
 
   useEffect(() => {
     if (!selectedEvent || !mapRef.current) return;
@@ -120,7 +128,8 @@ export default function MapContainer({
 
     if (typeFilter !== "ALL" && event.eventType !== typeFilter) return false;
 
-    if (dateFilter && event.startTime !== dateFilter) return false;
+    if (dateFilter && event.startTime.split("T")[0] !== dateFilter)
+      return false;
     if (timeFilter && !event.startTime?.includes(timeFilter)) return false;
 
     return true;
@@ -140,7 +149,7 @@ export default function MapContainer({
             </Button>
           </DialogTrigger>
           {/* Mobile responsive adjustments: w-[95vw], max-h bounds, padding adjustments */}
-          <DialogContent className="w-[95vw] max-w-[425px] p-4 sm:p-6 max-h-[90vh] overflow-y-auto rounded-xl">
+          <DialogContent className="w-[95vw] max-w-106.25 p-4 sm:p-6 max-h-[90vh] overflow-y-auto rounded-xl">
             <DialogHeader>
               <DialogTitle>Filter Events</DialogTitle>
               <DialogDescription>
@@ -201,7 +210,7 @@ export default function MapContainer({
                     className="w-full max-w-80 text-base sm:text-sm" // prevents iOS auto-zoom
                   />
                 </div>
-                <div className="grid gap-2.5">
+                {/* <div className="grid gap-2.5">
                   <Label htmlFor="time">Time</Label>
                   <Input
                     id="time"
@@ -210,7 +219,7 @@ export default function MapContainer({
                     onChange={(e) => setTimeFilter(e.target.value)}
                     className="w-full max-w-80 text-base sm:text-sm"
                   />
-                </div>
+                </div> */}
               </div>
 
               <Button
@@ -252,7 +261,7 @@ export default function MapContainer({
         }}
         maxBounds={TALLINN_BOUNDS}
         style={{ width: "100%", height: "100%" }}
-        mapStyle={MAP_STYLE}
+        mapStyle={mapStyle}
         attributionControl={false}
         onClick={handleMapClick}
       >

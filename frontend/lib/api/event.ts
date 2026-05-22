@@ -1,12 +1,8 @@
 "use server";
 
-import {
-  ApiResponse,
-  EventCategory,
-  EventResponse,
-  PageableResponse,
-} from "@/types/types";
+import { ApiResponse, PageableResponse } from "@/types/types";
 import { backendFetch } from "./client";
+import { EventCategory, EventRequest, EventResponse } from "@/types/event";
 
 export async function getAllEvents() {
   const res = await backendFetch("/events/all");
@@ -20,14 +16,26 @@ export async function getPagedEvents() {
   return body;
 }
 
+export async function createEvent(req: EventRequest) {
+  const res = await backendFetch("/events", {
+    method: "POST",
+    body: JSON.stringify(req),
+  });
+
+  const body: ApiResponse<EventResponse> = await res.json();
+  return body;
+}
+
 export async function getEventsByOwner(
   id: number,
   page?: number,
   size?: number,
+  sort?: string,
 ) {
   const params = new URLSearchParams();
   if (page !== undefined) params.append("page", page.toString());
   if (size !== undefined) params.append("size", size.toString());
+  if (sort !== undefined) params.append("sort", sort);
 
   const queryString = params.toString();
   const res = await backendFetch(

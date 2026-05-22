@@ -1,9 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { EventResponse, PageableResponse } from "@/types/types";
+import { PageableResponse } from "@/types/types";
 import { UserResponse } from "@/types/user";
-import { getEventsByOwner } from "@/lib/api/events";
+import { getEventsByOwner } from "@/lib/api/event";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { Field, FieldGroup } from "../ui/field";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Button } from "../ui/button";
+import { EventResponse } from "@/types/event";
 
 export default function ProfilePage({ user }: { user: UserResponse }) {
   const [myEvents, setMyEvents] =
@@ -48,9 +63,41 @@ export default function ProfilePage({ user }: { user: UserResponse }) {
           <h2 className="text-lg uppercase tracking-[0.2em] text-white/60 font-mono ml-2">
             My Events
           </h2>
-          <button className="h-10 px-6 rounded-full bg-white text-neutral-900 text-xs font-bold hover:scale-[1.02] transition-transform">
+          {/* <button className="h-10 px-6 rounded-full bg-white text-neutral-900 text-xs font-bold hover:scale-[1.02] transition-transform">
             + Add Event
-          </button>
+          </button> */}
+          <Dialog>
+            <form>
+              <DialogTrigger asChild>
+                {/* <Button variant="outline">Open Dialog</Button> */}
+                <button className="h-10 px-6 rounded-full bg-white text-neutral-900 text-xs font-bold hover:scale-[1.02] transition-transform">
+                  + Add Event
+                </button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-sm">
+                <DialogHeader>
+                  <DialogTitle>Add Event</DialogTitle>
+                  <DialogDescription></DialogDescription>
+                </DialogHeader>
+                <FieldGroup>
+                  <Field>
+                    <Label htmlFor="title">Title</Label>
+                    <Input id="title" name="title" />
+                  </Field>
+                  <Field>
+                    <Label htmlFor="description">Description</Label>
+                    <Input id="description" name="description" />
+                  </Field>
+                </FieldGroup>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                  </DialogClose>
+                  <Button type="submit">Publish</Button>
+                </DialogFooter>
+              </DialogContent>
+            </form>
+          </Dialog>
         </div>
 
         {!myEvents || myEvents.empty ? (

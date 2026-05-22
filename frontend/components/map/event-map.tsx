@@ -11,8 +11,8 @@ import {
   Theater,
   Compass,
 } from "lucide-react";
-import { getAllEvents } from "@/lib/api/events";
-import { EventResponse } from "@/types/types";
+import { getAllEvents } from "@/lib/api/event";
+import { EventResponse } from "@/types/event";
 import { toast } from "sonner";
 
 const MapContainer = dynamic(() => import("./map-container"), {
