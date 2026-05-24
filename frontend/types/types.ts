@@ -38,28 +38,7 @@ interface SortDetails {
   unsorted: boolean;
 }
 
-export type EventCategory =
-  | "NIGHTLIFE"
-  | "MUSIC"
-  | "TECH"
-  | "SPORT"
-  | "SOCIAL"
-  | "EDUCATIONAL"
-  | "ART"
-  | "OTHER";
-
-export type EventType = "COMMUNITY" | "VENUE";
-
-export interface EventResponse {
-  id: number;
-  title: string;
-  description: string;
-  category: EventCategory;
-  eventType: EventType;
-  locationString: string;
-  latitude: number;
-  longitude: number;
-  startTime: string;
-  endTime: string;
-  createdAt: string;
+export interface AuthResponse {
+  accessToken: string;
+  expirationMs: number;
 }

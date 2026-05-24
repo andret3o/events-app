@@ -2,41 +2,53 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Calendar, Home, Map, User } from "lucide-react";
 import { NAV_TABS } from "@/constants/navigation";
 
 export const BottomNavbar = () => {
   const pathname = usePathname();
+
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
-      <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/10 p-2 backdrop-blur-2xl shadow-xl w-fit mx-auto">
+    <nav
+      aria-label="Main navigation"
+      className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 pointer-events-auto"
+    >
+      <ul className="glass-nav flex items-center gap-1 rounded-full p-1.5">
         {NAV_TABS.map((tab) => {
           const isActive = pathname === tab.href;
           const Icon = tab.icon;
+
           return (
-            <Link
-              key={tab.id}
-              href={tab.href}
-              className={`relative flex h-14 w-14 items-center justify-center rounded-full transition-all duration-500 ${
-                isActive
-                  ? "bg-white text-neutral-900 scale-105 shadow-md"
-                  : "text-white/60 hover:text-white hover:bg-white/5"
-              }`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill={isActive ? "currentColor" : "none"}
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6"
+            <li key={tab.id}>
+              <Link
+                href={tab.href}
+                aria-label={tab.label}
+                aria-current={isActive ? "page" : undefined}
+                className={`
+                  relative flex h-12 w-12 items-center justify-center rounded-full
+                  transition-all duration-300
+                  ${
+                    isActive
+                      ? "bg-foreground text-background shadow-md scale-105"
+                      : "text-foreground/40 hover:text-foreground/80 hover:bg-foreground/8"
+                  }
+                `}
               >
-                <Icon />
-              </svg>
-            </Link>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill={isActive ? "currentColor" : "none"}
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="h-5 w-5"
+                  aria-hidden="true"
+                >
+                  <Icon />
+                </svg>
+              </Link>
+            </li>
           );
         })}
-      </div>
-    </div>
+      </ul>
+    </nav>
   );
 };

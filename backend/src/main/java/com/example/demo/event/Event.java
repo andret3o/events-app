@@ -36,9 +36,11 @@ public class Event {
     // TODO: Add image url field
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private EventCategory category;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private EventType type;
 
     @Column(nullable = false)

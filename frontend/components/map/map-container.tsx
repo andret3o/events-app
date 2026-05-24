@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Map, { Marker, Popup, MapRef } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { EventResponse } from "@/types/types";
+import { EventResponse } from "@/types/event";
 import {
   Select,
   SelectContent,
@@ -24,6 +24,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Filter, Navigation } from "lucide-react";
+import { useTheme } from "next-themes";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface MapContainerProps {
   events: EventResponse[];
@@ -31,23 +34,43 @@ interface MapContainerProps {
   onSelectEvent: (event: EventResponse | null) => void;
 }
 
+type ThemeOption = "dark" | "light";
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+
 const CATEGORY_COLORS: Record<string, string> = {
-  NIGHTLIFE: "#8b5cf6", // Purple
-  MUSIC: "#ef4444", // Red
-  TECH: "#3b82f6", // Blue
-  SPORT: "#10b981", // Green
-  SOCIAL: "#f59e0b", // Amber
-  EDUCATIONAL: "#6366f1", // Indigo
-  ART: "#ec4899", // Pink
-  OTHER: "#6b7280", // Gray
+  NIGHTLIFE: "#8b5cf6",
+  MUSIC: "#ef4444",
+  TECH: "#3b82f6",
+  SPORT: "#10b981",
+  SOCIAL: "#f59e0b",
+  EDUCATIONAL: "#6366f1",
+  ART: "#ec4899",
+  OTHER: "#6b7280",
 };
 
 const TALLINN_BOUNDS: [number, number, number, number] = [
   24.3, 59.3, 25.1, 59.6,
 ];
 
-const MAP_STYLE =
-  "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
+const MAP_STYLES: Record<ThemeOption, string> = {
+  dark: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
+  light: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+};
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function formatDate(isoString: string) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: false,
+  }).format(new Date(isoString));
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function MapContainer({
   events,
@@ -55,6 +78,7 @@ export default function MapContainer({
   onSelectEvent,
 }: MapContainerProps) {
   const mapRef = useRef<MapRef>(null);
+  const { resolvedTheme } = useTheme();
 
   const [userLocation, setUserLocation] = useState<{
     lat: number;
@@ -62,41 +86,38 @@ export default function MapContainer({
   } | null>(null);
   const [isLocating, setIsLocating] = useState(false);
 
-  // Filter States
-  const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
-  const [typeFilter, setTypeFilter] = useState<string>("ALL");
-  const [dateFilter, setDateFilter] = useState<string>("");
-  const [timeFilter, setTimeFilter] = useState<string>("");
+  // Filter state
+  const [categoryFilter, setCategoryFilter] = useState("ALL");
+  const [typeFilter, setTypeFilter] = useState("ALL");
+  const [dateFilter, setDateFilter] = useState(
+    new Date().toLocaleDateString("en-CA"),
+  );
 
+  const mapStyle = MAP_STYLES[(resolvedTheme as ThemeOption) ?? "light"];
+
+  // Fly to selected event
   useEffect(() => {
     if (!selectedEvent || !mapRef.current) return;
-
     mapRef.current.flyTo({
       center: [selectedEvent.longitude, selectedEvent.latitude],
       zoom: 15,
       pitch: 45,
-      essential: true,
       duration: 1800,
     });
   }, [selectedEvent]);
 
-  const handleMapClick = (e: any) => {
-    onSelectEvent(null);
-  };
-
-  const handleLocateUser = () => {
+  // Geolocation
+  function handleLocateUser() {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser");
+      alert("Geolocation is not supported by your browser.");
       return;
     }
-
     setIsLocating(true);
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
+      ({ coords }) => {
+        const { latitude, longitude } = coords;
         setUserLocation({ lat: latitude, lng: longitude });
         setIsLocating(false);
-
         mapRef.current?.flyTo({
           center: [longitude, latitude],
           zoom: 14,
@@ -104,51 +125,156 @@ export default function MapContainer({
           duration: 1500,
         });
       },
-      (error) => {
-        console.error("Error obtaining location", error);
+      (err) => {
+        console.error("Geolocation error", err);
         alert(
           "Unable to retrieve your location. Please check your permissions.",
         );
         setIsLocating(false);
       },
     );
-  };
+  }
 
+  // Filtered events
   const filteredEvents = events.filter((event) => {
     if (categoryFilter !== "ALL" && event.category !== categoryFilter)
       return false;
-
     if (typeFilter !== "ALL" && event.eventType !== typeFilter) return false;
-
-    if (dateFilter && event.startTime !== dateFilter) return false;
-    if (timeFilter && !event.startTime?.includes(timeFilter)) return false;
-
+    if (dateFilter && event.startTime.split("T")[0] !== dateFilter)
+      return false;
     return true;
   });
 
   return (
-    <div className="w-full h-full relative bg-muted">
-      <div className="absolute top-6 left-6 pt-[env(safe-area-inset-top)] pl-[env(safe-area-inset-left)] z-10 flex flex-col gap-3">
+    // fill the relative parent provided by EventMap
+    <div className="absolute inset-0">
+      {/* ── Map ── */}
+      <Map
+        ref={mapRef}
+        initialViewState={{
+          longitude: 24.7536,
+          latitude: 59.437,
+          zoom: 13,
+          pitch: 35,
+        }}
+        maxBounds={TALLINN_BOUNDS}
+        style={{ width: "100%", height: "100%" }}
+        mapStyle={mapStyle}
+        attributionControl={false}
+        onClick={() => onSelectEvent(null)}
+      >
+        {/* User location dot */}
+        {userLocation && (
+          <Marker longitude={userLocation.lng} latitude={userLocation.lat}>
+            <div className="relative flex h-6 w-6 items-center justify-center">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-40 animate-ping" />
+              <span className="relative inline-flex h-3 w-3 rounded-full bg-blue-600 border-2 border-white shadow-md" />
+            </div>
+          </Marker>
+        )}
+
+        {/* Event markers */}
+        {filteredEvents.map((event) => {
+          const color =
+            CATEGORY_COLORS[event.category] ?? CATEGORY_COLORS.OTHER;
+          const isSelected = selectedEvent?.id === event.id;
+
+          return (
+            <div key={event.id}>
+              <Marker
+                longitude={event.longitude}
+                latitude={event.latitude}
+                onClick={(e) => {
+                  e.originalEvent.stopPropagation();
+                  onSelectEvent(event);
+                }}
+              >
+                <div className="relative flex h-10 w-10 cursor-pointer items-center justify-center group">
+                  <span
+                    className="absolute inline-flex h-full w-full rounded-full opacity-20 animate-ping"
+                    style={{ backgroundColor: color }}
+                  />
+                  <span
+                    className="relative inline-flex h-3.5 w-3.5 rounded-full border-2 border-white/80 shadow-sm transition-transform duration-300 group-hover:scale-125"
+                    style={{
+                      backgroundColor: color,
+                      transform: isSelected ? "scale(1.35)" : undefined,
+                    }}
+                  />
+                </div>
+              </Marker>
+
+              {/* Popup */}
+              {isSelected && (
+                <Popup
+                  longitude={event.longitude}
+                  latitude={event.latitude}
+                  offset={12}
+                  closeButton={false}
+                  closeOnClick={false}
+                  anchor="bottom"
+                  // Remove maplibre's default white wrapper so our glass div shows
+                  className="[&_.maplibregl-popup-content]:!p-0 [&_.maplibregl-popup-content]:!bg-transparent [&_.maplibregl-popup-content]:!shadow-none [&_.maplibregl-popup-tip]:!border-t-transparent"
+                >
+                  {/* Glass popup card */}
+                  <div className="glass-heavy rounded-xl p-4 min-w-[220px] max-w-[280px]">
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <span
+                        className="h-1.5 w-1.5 rounded-full shrink-0"
+                        style={{ backgroundColor: color }}
+                      />
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                        {event.category}
+                      </span>
+                    </div>
+                    <h4 className="font-bold text-sm leading-snug text-foreground">
+                      {event.title}
+                    </h4>
+                    <p className="mt-1 text-xs text-muted-foreground line-clamp-1">
+                      {event.locationString}
+                    </p>
+                    <div className="mt-2.5 border-t border-border pt-2 text-[11px] font-medium text-foreground">
+                      {formatDate(event.startTime)}
+                    </div>
+                  </div>
+                </Popup>
+              )}
+            </div>
+          );
+        })}
+      </Map>
+
+      {/* ── Floating controls (above the map) ── */}
+      <div
+        className="absolute left-4 top-4 z-10 flex flex-col gap-2"
+        style={{
+          paddingTop: "env(safe-area-inset-top)",
+          paddingLeft: "env(safe-area-inset-left)",
+        }}
+      >
+        {/* Filter dialog trigger */}
         <Dialog>
           <DialogTrigger asChild>
             <Button
               size="icon"
               variant="secondary"
-              className="w-12 h-12 rounded-full"
+              className="glass h-11 w-11 rounded-full border-0"
             >
-              <Filter className="w-5 h-5" />
+              <Filter className="h-4 w-4" />
             </Button>
           </DialogTrigger>
-          {/* Mobile responsive adjustments: w-[95vw], max-h bounds, padding adjustments */}
-          <DialogContent className="w-[95vw] max-w-[425px] p-4 sm:p-6 max-h-[90vh] overflow-y-auto rounded-xl">
+
+          <DialogContent className="glass-heavy w-[95vw] max-w-md rounded-2xl border-0 p-5 max-h-[90dvh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Filter Events</DialogTitle>
               <DialogDescription>
                 Narrow down the map to find exactly what you're looking for.
               </DialogDescription>
             </DialogHeader>
-            <div className="grid gap-5 py-2">
-              <div className="grid gap-2.5">
+
+            <div className="grid gap-5 pt-2">
+              {/* Category */}
+              <div className="grid gap-2">
                 <Label htmlFor="category">Category</Label>
                 <Select
                   value={categoryFilter}
@@ -157,7 +283,7 @@ export default function MapContainer({
                   <SelectTrigger id="category" className="w-full">
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-popover/95 backdrop-blur-xl border-border">
                     <SelectGroup>
                       <SelectItem value="ALL">All Categories</SelectItem>
                       <SelectItem value="NIGHTLIFE">Nightlife</SelectItem>
@@ -173,13 +299,14 @@ export default function MapContainer({
                 </Select>
               </div>
 
-              <div className="grid gap-2.5">
+              {/* Event type */}
+              <div className="grid gap-2">
                 <Label htmlFor="type">Event Type</Label>
                 <Select value={typeFilter} onValueChange={setTypeFilter}>
                   <SelectTrigger id="type" className="w-full">
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-popover/95 backdrop-blur-xl border-border">
                     <SelectGroup>
                       <SelectItem value="ALL">All Types</SelectItem>
                       <SelectItem value="COMMUNITY">Community</SelectItem>
@@ -189,38 +316,26 @@ export default function MapContainer({
                 </Select>
               </div>
 
-              {/* Stack vertically on mobile, side-by-side on sm screens and up */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="grid gap-2.5">
-                  <Label htmlFor="date">Date</Label>
-                  <Input
-                    id="date"
-                    type="date"
-                    value={dateFilter}
-                    onChange={(e) => setDateFilter(e.target.value)}
-                    className="w-full max-w-80 text-base sm:text-sm" // prevents iOS auto-zoom
-                  />
-                </div>
-                <div className="grid gap-2.5">
-                  <Label htmlFor="time">Time</Label>
-                  <Input
-                    id="time"
-                    type="time"
-                    value={timeFilter}
-                    onChange={(e) => setTimeFilter(e.target.value)}
-                    className="w-full max-w-80 text-base sm:text-sm"
-                  />
-                </div>
+              {/* Date */}
+              <div className="grid gap-2">
+                <Label htmlFor="date">Date</Label>
+                <Input
+                  id="date"
+                  type="date"
+                  value={dateFilter}
+                  onChange={(e) => setDateFilter(e.target.value)}
+                  className="text-base sm:text-sm" // prevents iOS auto-zoom
+                />
               </div>
 
+              {/* Clear */}
               <Button
                 variant="outline"
-                className="mt-4 w-full"
+                className="w-full"
                 onClick={() => {
                   setCategoryFilter("ALL");
                   setTypeFilter("ALL");
                   setDateFilter("");
-                  setTimeFilter("");
                 }}
               >
                 Clear Filters
@@ -229,121 +344,19 @@ export default function MapContainer({
           </DialogContent>
         </Dialog>
 
+        {/* Locate me */}
         <Button
           size="icon"
+          variant="secondary"
           onClick={handleLocateUser}
           disabled={isLocating}
-          variant="secondary"
-          className={`w-12 h-12 rounded-full`}
+          className="glass h-11 w-11 rounded-full border-0"
         >
           <Navigation
-            className={`w-5 h-5 ${isLocating ? "animate-pulse text-blue-500" : ""}`}
+            className={`h-4 w-4 transition-colors ${isLocating ? "animate-pulse text-blue-500" : ""}`}
           />
         </Button>
       </div>
-
-      <Map
-        ref={mapRef}
-        initialViewState={{
-          longitude: 24.7536,
-          latitude: 59.437,
-          zoom: 13,
-          pitch: 35,
-        }}
-        maxBounds={TALLINN_BOUNDS}
-        style={{ width: "100%", height: "100%" }}
-        mapStyle={MAP_STYLE}
-        attributionControl={false}
-        onClick={handleMapClick}
-      >
-        {userLocation && (
-          <Marker longitude={userLocation.lng} latitude={userLocation.lat}>
-            <div className="relative flex h-6 w-6 items-center justify-center">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-40 animate-ping" />
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-600 border-2 border-white shadow-md" />
-            </div>
-          </Marker>
-        )}
-
-        {filteredEvents.map((event) => {
-          const accentColor =
-            CATEGORY_COLORS[event.category] || CATEGORY_COLORS["OTHER"];
-          const isSelected = selectedEvent?.id === event.id;
-
-          return (
-            <div key={event.id}>
-              <Marker
-                longitude={event.longitude}
-                latitude={event.latitude}
-                onClick={(e) => {
-                  e.originalEvent.stopPropagation();
-                  onSelectEvent(event);
-                }}
-              >
-                <div className="relative flex h-10 w-10 items-center justify-center cursor-pointer group">
-                  <span
-                    className="absolute inline-flex h-full w-full rounded-full opacity-20 animate-ping"
-                    style={{ backgroundColor: accentColor }}
-                  />
-                  <span
-                    className="relative inline-flex rounded-full h-3.5 w-3.5 border-2 border-[var(--border)] shadow-sm transition-transform duration-300 group-hover:scale-125"
-                    style={{
-                      backgroundColor: accentColor,
-                      transform: isSelected ? "scale(1.25)" : undefined,
-                    }}
-                  />
-                </div>
-              </Marker>
-
-              {isSelected && (
-                <Popup
-                  longitude={event.longitude}
-                  latitude={event.latitude}
-                  offset={12}
-                  closeButton={false}
-                  closeOnClick={false}
-                  anchor="bottom"
-                  className="custom-popup"
-                >
-                  <div className="bg-popover text-popover-foreground p-4 rounded-xl shadow-xl border border-border min-w-55 font-sans">
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <span
-                        className="w-1.5 h-1.5 rounded-full"
-                        style={{ backgroundColor: accentColor }}
-                      />
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                        {event.category}
-                      </span>
-                    </div>
-                    <h4 className="font-bold text-sm leading-tight text-foreground">
-                      {event.title}
-                    </h4>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {event.locationString}
-                    </p>
-                    <div className="mt-2.5 pt-2 border-t border-border text-[11px] font-medium text-foreground flex justify-between">
-                      <span>{formatDate(event.startTime)}</span>
-                    </div>
-                  </div>
-                </Popup>
-              )}
-            </div>
-          );
-        })}
-      </Map>
     </div>
   );
 }
-
-const formatDate = (isoString: string) => {
-  const date = new Date(isoString);
-
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short", // "Jul"
-    day: "numeric", // "3"
-
-    hour: "numeric", // "9"
-    minute: "2-digit", // "00"
-    hour12: false, // Use AM/PM
-  }).format(date);
-};

@@ -129,6 +129,9 @@ public class EventService {
     private EventResponseDTO mapToResponseDTO(Event event) {
         return new EventResponseDTO(
                 event.getId(),
+                event.getOwner().getId(),
+                event.getOwner().getName(),
+                event.getOwner().getUsername(),
                 event.getTitle(),
                 event.getDescription(),
                 event.getCategory(),
