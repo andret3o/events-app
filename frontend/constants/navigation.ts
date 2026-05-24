@@ -12,11 +12,11 @@ export const NAV_TABS = [
     icon: Map,
     href: "/map",
   },
-  //   {
-  //     id: "events",
-  //     icon: Calendar,
-  //     href: "/events",
-  //   },
+  {
+    id: "events",
+    icon: Calendar,
+    href: "/events",
+  },
   {
     id: "profile",
     icon: User,

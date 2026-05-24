@@ -260,7 +260,7 @@ export default function CreateEventPage() {
       title: title.trim(),
       description: description.trim(),
       category,
-      locationString: selectedLocation.display_name,
+      locationString: `${selectedLocation.name}, ${selectedLocation.address.road} ${selectedLocation.address.house_number}, ${selectedLocation.address.city}`,
       latitude: parseFloat(selectedLocation.lat),
       longitude: parseFloat(selectedLocation.lon),
       startTime: toInstant(startTime),

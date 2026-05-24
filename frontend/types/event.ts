@@ -12,6 +12,9 @@ export type EventType = "COMMUNITY" | "VENUE";
 
 export interface EventResponse {
   id: number;
+  ownerId: number;
+  ownerName: string;
+  ownerUsername: string;
   title: string;
   description: string;
   category: EventCategory;

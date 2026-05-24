@@ -10,8 +10,20 @@ export async function getAllEvents() {
   return body;
 }
 
-export async function getPagedEvents() {
-  const res = await backendFetch("/events");
+export async function getPagedEvents(
+  page?: number,
+  size?: number,
+  sort?: string,
+) {
+  const params = new URLSearchParams();
+  if (page !== undefined) params.append("page", page.toString());
+  if (size !== undefined) params.append("size", size.toString());
+  if (sort !== undefined) params.append("sort", sort);
+
+  const queryString = params.toString();
+  const res = await backendFetch(
+    `/events${queryString ? "?" + queryString : ""}`,
+  );
   const body: ApiResponse<PageableResponse<EventResponse>> = await res.json();
   return body;
 }
@@ -46,7 +58,7 @@ export async function getEventsByOwner(
 }
 
 export async function getEventsByCategory(category: EventCategory) {
-  const res = await backendFetch("/events");
+  const res = await backendFetch(`/events/category/${category}`);
   const body: ApiResponse<PageableResponse<EventResponse>> = await res.json();
   return body;
 }

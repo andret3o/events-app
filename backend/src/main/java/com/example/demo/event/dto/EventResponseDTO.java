@@ -8,6 +8,12 @@ import java.time.Instant;
 public record EventResponseDTO(
         Long id,
 
+        Long ownerId,
+
+        String ownerName,
+
+        String ownerUsername,
+
         String title,
 
         String description,
