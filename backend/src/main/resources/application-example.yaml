@@ -2,12 +2,17 @@ spring:
   application:
     name: demo
   datasource:
-    url: jdbc:postgresql://localhost:5432/mydb
-    username: postgres
-    password: yourpassword
+    url: jdbc:postgresql://localhost:5432/mydb # change "mydb" to your db name
+    username: postgres # change to your username
+    password: yourpassword # change to your password
   flyway:
     enabled: true
-    locations: classpath:db/migration
+    locations:
+      - classpath:db/migration
+      - classpath:db/migration/dev # Mock data seeder.
+        # NOTE: This directory contains the mock data seeder script (R__*.sql).
+        # When active, it will wipe and re-seed all users and events on application
+        # startup or whenever the SQL file is modified.
     check-location: true
   jpa:
     hibernate:
