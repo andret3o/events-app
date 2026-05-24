@@ -2,15 +2,6 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import {
-  MapPin,
-  Clock,
-  Music,
-  Trophy,
-  Utensils,
-  Theater,
-  Compass,
-} from "lucide-react";
 import { getAllEvents } from "@/lib/api/event";
 import { EventResponse } from "@/types/event";
 import { toast } from "sonner";
@@ -18,8 +9,8 @@ import { toast } from "sonner";
 const MapContainer = dynamic(() => import("./map-container"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full flex items-center justify-center bg-muted">
-      Loading..
+    <div className="w-full h-full flex items-center justify-center bg-muted text-muted-foreground text-sm">
+      Loading map…
     </div>
   ),
 });
@@ -31,32 +22,24 @@ export default function EventMap() {
   );
 
   useEffect(() => {
-    async function fetch() {
+    async function fetchEvents() {
       const res = await getAllEvents();
-
       if (!res.success) {
-        toast.error("Error fetching events", {
-          position: "top-center",
-        });
+        toast.error("Error fetching events", { position: "top-center" });
+        return;
       }
-
-      if (res.success && res.data) {
-        setEvents(res.data);
-      }
+      if (res.data) setEvents(res.data);
     }
-    fetch();
+    fetchEvents();
   }, []);
 
   return (
-    <div className=" w-full h-full rounded-2xl overflow-hidden border border-border shadow-md bg-card">
-      {/* Dynamic Map Component */}
-      <div className="absolute inset-0 z-0">
-        <MapContainer
-          events={events}
-          selectedEvent={selectedEvent}
-          onSelectEvent={setSelectedEvent}
-        />
-      </div>
+    <div className="relative w-full h-full rounded-2xl overflow-hidden border border-border shadow-md">
+      <MapContainer
+        events={events}
+        selectedEvent={selectedEvent}
+        onSelectEvent={setSelectedEvent}
+      />
     </div>
   );
 }

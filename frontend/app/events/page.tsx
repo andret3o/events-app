@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import EventsPage from "@/components/events-page";
+import EventsPage from "@/components/events/events-page";
 import { getPagedEvents, getEventsByOwner } from "@/lib/api/event";
 import { getMe } from "@/lib/api/user";
 

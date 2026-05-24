@@ -16,8 +16,8 @@ import {
   ShieldCheck,
   LogOut,
 } from "lucide-react";
-import { EventCard } from "@/components/events-page";
-import { EventDialog } from "@/components/event-dialog";
+import { EventCard } from "@/components/events/event-card";
+import { EventDialog } from "@/components/events/event-dialog";
 import { EventResponse } from "@/types/event";
 import { UserResponse, Role } from "@/types/user";
 import { PageableResponse } from "@/types/types";
@@ -169,9 +169,6 @@ export default function ProfilePage({ user, eventsPage }: ProfilePageProps) {
                     </AlertDialogTrigger>
                     <AlertDialogContent size="sm" aria-describedby={undefined}>
                       <AlertDialogHeader>
-                        {/* <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
-                        <Trash2Icon />
-                      </AlertDialogMedia> */}
                         <AlertDialogTitle>Log out?</AlertDialogTitle>
                         <AlertDialogDescription>
                           Are you sure you want logout?

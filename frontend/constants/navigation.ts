@@ -10,16 +10,19 @@ export const NAV_TABS = [
   {
     id: "map",
     icon: Map,
+    label: "Map",
     href: "/map",
   },
   {
     id: "events",
     icon: Calendar,
+    label: "Events",
     href: "/events",
   },
   {
     id: "profile",
     icon: User,
+    label: "Profile",
     href: "/profile",
   },
 ] as const;

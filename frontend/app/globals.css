@@ -46,86 +46,245 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* ── Glass design tokens ────────────────────────────────────────────────
+     These are referenced in component utilities below.
+     Swap --glass-blur to taste (md = 12px, lg = 16px, xl = 24px).       */
+  --glass-blur: 16px;
+  --glass-blur-heavy: 32px;
+  --glass-border-light: oklch(0 0 0 / 8%);
+  --glass-border-dark: oklch(1 0 0 / 12%);
+  --glass-shadow-light:
+    0 4px 24px oklch(0 0 0 / 8%), 0 1px 4px oklch(0 0 0 / 4%);
+  --glass-shadow-dark:
+    0 4px 24px oklch(0 0 0 / 40%), 0 1px 4px oklch(0 0 0 / 20%);
 }
 
+/* ── Light mode ─────────────────────────────────────────────────────────────── */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  /* Base colours */
+  --background: oklch(0.97 0.004 264); /* very light blue-grey tint */
+  --foreground: oklch(0.15 0.008 264);
+
+  /* Glass card — white with low opacity so the bg shows through */
+  --card: oklch(1 0 0 / 70%);
+  --card-foreground: oklch(0.15 0.008 264);
+
+  --popover: oklch(1 0 0 / 85%);
+  --popover-foreground: oklch(0.15 0.008 264);
+
+  /* Primary: dark ink — crisp on glass */
+  --primary: oklch(0.18 0.008 264);
+  --primary-foreground: oklch(0.98 0 0);
+
+  --secondary: oklch(0.94 0.004 264 / 60%);
+  --secondary-foreground: oklch(0.18 0.008 264);
+
+  --muted: oklch(0.94 0.004 264 / 50%);
+  --muted-foreground: oklch(0.5 0.008 264);
+
+  --accent: oklch(0.94 0.004 264 / 60%);
+  --accent-foreground: oklch(0.18 0.008 264);
+
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+
+  /* Glass border: very subtle dark line */
+  --border: oklch(0 0 0 / 8%);
+  --input: oklch(0 0 0 / 6%);
+  --ring: oklch(0.18 0.008 264 / 30%);
+
+  /* Larger radius gives rounder, softer glass feel */
+  --radius: 0.875rem;
+
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  --sidebar: oklch(1 0 0 / 60%);
+  --sidebar-foreground: oklch(0.15 0.008 264);
+  --sidebar-primary: oklch(0.18 0.008 264);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.94 0.004 264 / 60%);
+  --sidebar-accent-foreground: oklch(0.18 0.008 264);
+  --sidebar-border: oklch(0 0 0 / 8%);
+  --sidebar-ring: oklch(0.18 0.008 264 / 30%);
 }
 
+/* ── Dark mode ──────────────────────────────────────────────────────────────── */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --background: oklch(0.13 0.012 264); /* deep blue-grey */
+  --foreground: oklch(0.93 0.004 264);
+
+  /* Glass card — white at very low opacity */
+  --card: oklch(1 0 0 / 7%);
+  --card-foreground: oklch(0.93 0.004 264);
+
+  --popover: oklch(1 0 0 / 10%);
+  --popover-foreground: oklch(0.93 0.004 264);
+
+  --primary: oklch(0.93 0.004 264);
+  --primary-foreground: oklch(0.15 0.008 264);
+
+  --secondary: oklch(1 0 0 / 8%);
+  --secondary-foreground: oklch(0.93 0.004 264);
+
+  --muted: oklch(1 0 0 / 6%);
+  --muted-foreground: oklch(0.6 0.008 264);
+
+  --accent: oklch(1 0 0 / 8%);
+  --accent-foreground: oklch(0.93 0.004 264);
+
   --destructive: oklch(0.704 0.191 22.216);
+
+  /* Glass border: subtle light line */
   --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --input: oklch(1 0 0 / 8%);
+  --ring: oklch(0.93 0.004 264 / 30%);
+
+  --radius: 0.875rem;
+
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
+
+  --sidebar: oklch(1 0 0 / 7%);
+  --sidebar-foreground: oklch(0.93 0.004 264);
+  --sidebar-primary: oklch(0.93 0.004 264);
+  --sidebar-primary-foreground: oklch(0.15 0.008 264);
+  --sidebar-accent: oklch(1 0 0 / 8%);
+  --sidebar-accent-foreground: oklch(0.93 0.004 264);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar-ring: oklch(0.93 0.004 264 / 30%);
 }
 
+/* ── Base layer ─────────────────────────────────────────────────────────────── */
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+    /* Subtle gradient mesh so glass has something to blur against */
+    background-image:
+      radial-gradient(
+        ellipse 80% 50% at 20% 10%,
+        oklch(0.75 0.08 264 / 25%) 0%,
+        transparent 60%
+      ),
+      radial-gradient(
+        ellipse 60% 50% at 80% 90%,
+        oklch(0.75 0.08 220 / 20%) 0%,
+        transparent 60%
+      );
+    background-attachment: fixed;
   }
+
+  .dark body,
+  body:is(.dark *) {
+    background-image:
+      radial-gradient(
+        ellipse 80% 50% at 20% 10%,
+        oklch(0.35 0.08 264 / 30%) 0%,
+        transparent 60%
+      ),
+      radial-gradient(
+        ellipse 60% 50% at 80% 90%,
+        oklch(0.3 0.08 220 / 25%) 0%,
+        transparent 60%
+      );
+  }
+
   html {
     @apply font-sans;
+  }
+}
+
+/* ── Glass utility classes ──────────────────────────────────────────────────── 
+   Use these directly in className when you need glass treatment on any element
+   that isn't already a shadcn component (nav overlays, custom panels, etc.)   */
+@layer utilities {
+  /* Standard glass panel */
+  .glass {
+    background-color: var(--card);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--border);
+    box-shadow: var(--glass-shadow-light);
+  }
+
+  .dark .glass {
+    box-shadow: var(--glass-shadow-dark);
+  }
+
+  /* Heavier blur — for modals, dialogs, prominent panels */
+  .glass-heavy {
+    background-color: var(--popover);
+    backdrop-filter: blur(var(--glass-blur-heavy));
+    -webkit-backdrop-filter: blur(var(--glass-blur-heavy));
+    border: 1px solid var(--border);
+    box-shadow: var(--glass-shadow-light);
+  }
+
+  .dark .glass-heavy {
+    box-shadow: var(--glass-shadow-dark);
+  }
+
+  /* Navbar pill variant — tighter bg, no card token dependency */
+  .glass-nav {
+    background-color: oklch(1 0 0 / 55%);
+    backdrop-filter: blur(var(--glass-blur-heavy));
+    -webkit-backdrop-filter: blur(var(--glass-blur-heavy));
+    border: 1px solid oklch(0 0 0 / 8%);
+    box-shadow: var(--glass-shadow-light);
+  }
+
+  .dark .glass-nav {
+    background-color: oklch(1 0 0 / 8%);
+    border-color: oklch(1 0 0 / 12%);
+    box-shadow: var(--glass-shadow-dark);
+  }
+}
+
+/* ── Shadcn component overrides ─────────────────────────────────────────────── 
+   Applied globally so every Card, Dialog, Popover, Input etc. gets glass.
+   Add backdrop-filter here rather than editing each component's source file.  */
+@layer components {
+  /* Card */
+  .card-glass,
+  [class*="rounded"][class*="border"][class*="bg-card"] {
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    box-shadow: var(--glass-shadow-light);
+  }
+
+  .dark [class*="rounded"][class*="border"][class*="bg-card"] {
+    box-shadow: var(--glass-shadow-dark);
+  }
+
+  /* Dialog / Sheet content */
+  [role="dialog"] > [class*="bg-"] {
+    backdrop-filter: blur(var(--glass-blur-heavy));
+    -webkit-backdrop-filter: blur(var(--glass-blur-heavy));
+  }
+
+  /* Popover / Dropdown / Select content */
+  [data-radix-popper-content-wrapper] > * {
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+  }
+
+  /* Input — glass tint */
+  input:not([type="checkbox"]):not([type="radio"]),
+  textarea,
+  select {
+    background-color: var(--input);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 }
 
