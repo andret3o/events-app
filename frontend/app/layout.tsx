@@ -52,7 +52,7 @@ export default function RootLayout({
         >
           {/* BG disabled for now */}
           {/* <div className="fixed inset-0 -z-10 w-full h-[100lvh] overflow-hidden will-change-transform backface-hidden">
-            <div className="absolute inset-0 w-full h-full">
+            <div className=" absolute inset-0 w-full h-full">
               <Particles
                 particleColors={["#ffffff"]}
                 particleCount={200}

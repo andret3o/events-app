@@ -4,8 +4,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-application.yaml
-application.yml
+application-local.yml
+application-local.yaml
 
 ### STS ###
 .apt_generated

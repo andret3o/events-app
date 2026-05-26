@@ -169,7 +169,6 @@
 
   body {
     @apply bg-background text-foreground;
-    /* Subtle gradient mesh so glass has something to blur against */
     background-image:
       radial-gradient(
         ellipse 80% 50% at 20% 10%,
@@ -203,6 +202,21 @@
     @apply font-sans;
   }
 }
+
+/* ── Base layer ─────────────────────────────────────────────────────────────── */
+/* @layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  html {
+    @apply font-sans;
+  }
+} */
 
 /* ── Glass utility classes ──────────────────────────────────────────────────── 
    Use these directly in className when you need glass treatment on any element
