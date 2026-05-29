@@ -17,6 +17,7 @@ export interface EventResponse {
   ownerUsername: string;
   title: string;
   description: string;
+  imageUrl: string;
   category: EventCategory;
   eventType: EventType;
   locationString: string;
@@ -29,7 +30,8 @@ export interface EventResponse {
 
 export interface EventRequest {
   title: string;
-  description: string;
+  description?: string;
+  image?: File;
   category: EventCategory;
   locationString: string;
   latitude: number;

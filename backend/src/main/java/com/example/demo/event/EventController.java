@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,7 +26,7 @@ public class EventController {
 
     @PostMapping
     public ResponseEntity<EventResponseDTO> createEvent(
-            @Valid @RequestBody EventRequestDTO requestDTO,
+            @Valid @ModelAttribute EventRequestDTO requestDTO,
             @AuthenticationPrincipal User currentUser) {
 
         EventResponseDTO createdEvent = eventService.createEvent(requestDTO, currentUser);
@@ -37,7 +39,8 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<EventResponseDTO>> getPagedEvents(Pageable pageable) {
+    public ResponseEntity<Page<EventResponseDTO>> getPagedEvents(
+            @PageableDefault(size = 20, sort = "startTime", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.ok(eventService.getEvents(pageable));
     }
 

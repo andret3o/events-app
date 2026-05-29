@@ -1,5 +1,6 @@
 package com.example.demo.event;
 
+import com.example.demo.cloud.CloudinaryService;
 import com.example.demo.event.dto.EventRequestDTO;
 import com.example.demo.event.dto.EventResponseDTO;
 import com.example.demo.event.enums.EventCategory;
@@ -20,12 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class EventService {
 
     private final EventRepository eventRepository;
+    private final CloudinaryService cloudinaryService;
 
     // Standard SRID 4326 is typically used for GPS coordinates (WGS84)
     private final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
@@ -33,10 +36,19 @@ public class EventService {
     @Transactional
     public EventResponseDTO createEvent(EventRequestDTO requestDTO, User owner) {
         EventType type = owner.getRole() == Role.VENUE ? EventType.VENUE : EventType.COMMUNITY;
+        String imageUrl = null;
+
+        try {
+            Map uploadResult = cloudinaryService.uploadFile(requestDTO.image(), "event-images");
+            imageUrl = uploadResult.get("secure_url").toString();
+        } catch(Exception e) {
+            System.out.println("Error uploading image: " + e.getMessage());
+        }
 
         Event event = Event.builder()
                 .title(requestDTO.title())
                 .description(requestDTO.description())
+                .imageUrl(imageUrl)
                 .category(requestDTO.category())
                 .type(type)
                 .locationString(requestDTO.locationString())
@@ -90,6 +102,22 @@ public class EventService {
             throw new AccessDeniedException("You do not have permission to update this event.");
         }
 
+        if (requestDTO.image() != null) {
+            try {
+                Map uploadResult = cloudinaryService.uploadFile(requestDTO.image(), "event-images");
+                existingEvent.setImageUrl(uploadResult.get("secure_url").toString());
+
+                if (existingEvent.getImageUrl() != null) {
+                    String publicId = cloudinaryService.extractPublicId(existingEvent.getImageUrl());
+                    if (publicId != null) {
+                        cloudinaryService.deleteFile(publicId);
+                    }
+                }
+            } catch(Exception e) {
+                System.out.println("Error uploading image: " + e.getMessage());
+            }
+        }
+
         existingEvent.setTitle(requestDTO.title());
         existingEvent.setDescription(requestDTO.description());
         existingEvent.setCategory(requestDTO.category());
@@ -134,6 +162,7 @@ public class EventService {
                 event.getOwner().getUsername(),
                 event.getTitle(),
                 event.getDescription(),
+                event.getImageUrl(),
                 event.getCategory(),
                 event.getType(),
                 event.getLocationString(),

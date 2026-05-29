@@ -4,6 +4,7 @@ import { Card, CardContent } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Separator } from "../ui/separator";
 import { CalendarDays, Clock, Layers, MapPin } from "lucide-react";
+import Image from "next/image";
 
 const DESC_TRUNCATE = 90; // characters shown in card before "…"
 
@@ -31,13 +32,17 @@ function truncate(str: string | undefined, max: number) {
 
 // ─── Category image placeholder (compact, for card) ───────────────────────────
 
-function CategoryThumb({ category }: { category: EventCategory }) {
-  const meta = CATEGORY_META[category];
+function CategoryThumb({ event }: { event: EventResponse }) {
+  const meta = CATEGORY_META[event.category];
   return (
     <div
       className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${meta.bgClass} overflow-hidden`}
     >
-      <span className="text-xl select-none leading-none">{meta.emoji}</span>
+      {event.imageUrl ? (
+        <Image alt={event.title} fill src={event.imageUrl} priority />
+      ) : (
+        <span className="text-xl select-none leading-none">{meta.emoji}</span>
+      )}
     </div>
   );
 }
@@ -65,7 +70,7 @@ export function EventCard({
       <CardContent className="p-4 sm:p-5 flex flex-col flex-1">
         {/* ── Header: thumb + title + badge ── */}
         <div className="mb-3 flex items-start gap-3">
-          <CategoryThumb category={event.category} />
+          <CategoryThumb event={event} />
 
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">

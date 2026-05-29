@@ -27,13 +27,13 @@ public class Event {
     @Column(name = "event_id")
     private Long id;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 60)
     private String title;
 
     @Column(nullable = false)
     private String description;
 
-    // TODO: Add image url field
+    private String imageUrl;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

@@ -6,19 +6,27 @@ export async function backendFetch(path: string, options: RequestInit = {}) {
   const cookieStore = await cookies();
   const token = cookieStore.get("access_token")?.value;
 
+  const isFormData = options.body instanceof FormData;
+
+  const headers = new Headers(options.headers);
+
+  if (!isFormData && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+
+  if (token) {
+    headers.set("Cookie", `access_token=${token}`);
+  }
+
   try {
     const response = await fetch(`${process.env.BACKEND_URL}${path}`, {
       ...options,
-      headers: {
-        ...options.headers,
-        Cookie: token ? `access_token=${token}` : "",
-        "Content-Type": "application/json",
-      },
+      headers,
     });
     return response;
   } catch (err) {
     return Response.json({
-      sucess: false,
+      success: false,
       message: err instanceof Error ? err.message : "Unexpected error",
     });
   }

@@ -18,6 +18,8 @@ public record EventResponseDTO(
 
         String description,
 
+        String imageUrl,
+
         EventCategory category,
 
         EventType eventType,

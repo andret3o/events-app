@@ -26,6 +26,7 @@ export function EventsGrid({
   emptyAction?: React.ReactNode;
 }) {
   const hasMore = currentPage + 1 < totalPages;
+  console.log(events);
 
   if (!isLoading && events.length === 0) {
     return (
