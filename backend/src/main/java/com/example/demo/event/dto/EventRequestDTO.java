@@ -5,6 +5,7 @@ import com.example.demo.event.enums.EventType;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
 
@@ -13,6 +14,8 @@ public record EventRequestDTO(
         String title,
 
         String description,
+
+        MultipartFile image,
 
         @NotNull(message = "Category is required")
         EventCategory category,

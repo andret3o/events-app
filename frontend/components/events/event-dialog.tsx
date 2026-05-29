@@ -37,6 +37,7 @@ import {
 } from "lucide-react";
 import { EventCategory, EventResponse } from "@/types/event";
 import { CATEGORY_META } from "@/constants/event";
+import Image from "next/image";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -139,10 +140,7 @@ export function EventDialog({
   const sameDay = isSameDay(event.startTime, event.endTime);
   // Ownership check — wire up event.ownerId once the backend returns it.
   // For now this is a placeholder: replace `event.ownerId` with the real field.
-  const isOwner =
-    currentUserId !== null &&
-    "ownerId" in event &&
-    (event as EventResponse & { ownerId?: number }).ownerId === currentUserId;
+  const isOwner = currentUserId !== null && event.ownerId === currentUserId;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -155,7 +153,18 @@ export function EventDialog({
       >
         {/* ── Image area ── */}
         <div className="relative h-48 w-full shrink-0 overflow-hidden sm:h-56">
-          <EventImagePlaceholder category={event.category as EventCategory} />
+          {event.imageUrl ? (
+            <Image
+              src={event.imageUrl}
+              alt={event.title}
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              priority={true}
+              className="object-cover"
+            />
+          ) : (
+            <EventImagePlaceholder category={event.category as EventCategory} />
+          )}
 
           {/* Category badge — floated over image */}
           <div className="absolute left-4 bottom-4">
@@ -220,7 +229,7 @@ export function EventDialog({
 
             {/* Description */}
             {event.description && (
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="whitespace-pre-line text-sm text-muted-foreground leading-relaxed">
                 {event.description}
               </p>
             )}
@@ -248,11 +257,6 @@ export function EventDialog({
                   {formatTime(event.startTime)}
                   {" – "}
                   {formatTime(event.endTime)}
-                  {!sameDay && (
-                    <span className="ml-1.5 text-xs text-muted-foreground">
-                      (multi-day)
-                    </span>
-                  )}
                 </span>
               </DetailRow>
 

@@ -28,10 +28,10 @@ export async function getPagedEvents(
   return body;
 }
 
-export async function createEvent(req: EventRequest) {
+export async function createEvent(req: FormData) {
   const res = await backendFetch("/events", {
     method: "POST",
-    body: JSON.stringify(req),
+    body: req,
   });
 
   const body: ApiResponse<EventResponse> = await res.json();

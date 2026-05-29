@@ -17,10 +17,19 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
 
 jwt:
   secret: your-very-secure-secret-key-at-least-256-bits-long
   expiration: 604800000 #   7 days
+
+cloudinary:
+  cloud_name: name # change to your cloud name
+  api_key: key # change to your key
+  api_secret: secret # change to your secret
 
 server:
   port: 8080
