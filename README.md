@@ -1,3 +1,5 @@
+<img width="1920" height="1080" alt="Progetto senza titolo-3" src="https://github.com/user-attachments/assets/c25659cd-dad6-4802-afac-bc497a81f8d8" />
+
 # Events App
 
 Monorepo application with:
