@@ -291,15 +291,6 @@
     backdrop-filter: blur(var(--glass-blur));
     -webkit-backdrop-filter: blur(var(--glass-blur));
   }
-
-  /* Input — glass tint */
-  input:not([type="checkbox"]):not([type="radio"]),
-  textarea,
-  select {
-    background-color: var(--input);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-  }
 }
 
 /* Remove default MapLibre popup styling */

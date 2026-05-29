@@ -11,7 +11,7 @@
  *     onOpenChange={setOpen}
  *   />
  *
- * The dialog is fully self-contained. Can be imported on any page (events list,
+ * The dialog can be imported on any page (events list,
  * map, profile, etc.) and pass the event + open state.
  */
 
@@ -31,9 +31,10 @@ import {
   MapPin,
   Map,
   Pencil,
-  Layers,
   Tag,
   ImageIcon,
+  Verified,
+  User,
 } from "lucide-react";
 import { EventCategory, EventResponse } from "@/types/event";
 import { CATEGORY_META } from "@/constants/event";
@@ -172,15 +173,24 @@ export function EventDialog({
               variant="outline"
               className={`text-xs font-semibold px-2.5 py-1 backdrop-blur-sm bg-background/80 border ${cat.badgeClass}`}
             >
-              {cat.emoji} {cat.label}
+              {cat.label}
             </Badge>
           </div>
 
           {/* Type chip */}
           <div className="absolute right-4 bottom-4">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-background/80 backdrop-blur-sm border border-border px-2.5 py-1 text-[11px] font-medium text-foreground">
-              <Layers size={10} />
-              {event.eventType === "COMMUNITY" ? "Community" : "Venue"}
+              {/* <CheckCircle size={10} /> */}
+
+              {event.eventType === "COMMUNITY" ? (
+                <>
+                  <User size={13} /> Community
+                </>
+              ) : (
+                <>
+                  <Verified size={13} /> Venue
+                </>
+              )}
             </span>
           </div>
         </div>
