@@ -28,32 +28,19 @@ export function FilterBar({
     <div className="space-y-3">
       <div className="flex gap-2">
         <div className="relative flex-1">
-          <SearchIcon
-            size={15}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
-          />
-          <Input
-            placeholder="Search events…"
-            value={search}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-9 pr-4 h-10"
-          />
-          {/* Change search input to input group later */}
-          {/* <InputGroup>
-            <InputGroupInput placeholder="Search events..." className="" />
+          <InputGroup>
+            <InputGroupInput
+              placeholder="Search events..."
+              value={search}
+              onChange={(e) => onSearchChange(e.target.value)}
+            />
             <InputGroupAddon>
               <SearchIcon />
             </InputGroupAddon>
-          </InputGroup> */}
-          {search && (
-            <button
-              type="button"
-              onClick={() => onSearchChange("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <X size={14} />
-            </button>
-          )}
+            <InputGroupAddon align="inline-end">
+              {search && <X onClick={() => onSearchChange("")} />}
+            </InputGroupAddon>
+          </InputGroup>
         </div>
         <Button
           type="button"
